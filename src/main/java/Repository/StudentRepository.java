@@ -2,22 +2,22 @@ package Repository;
 
 import Database.SessionFactorySingleton;
 import Entity.Employee;
-import Entity.Lesson;
-import Entity.LessonScores;
+import Entity.Student;
 import org.hibernate.SessionFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class LessonRepository implements BaseRepository<Lesson> {
+public class StudentRepository implements UserInterface<Student> {
+
     private SessionFactory sessionFactory = SessionFactorySingleton.getInstance();
 
     @Override
-    public void save(Lesson lesson) {
+    public void save(Student student) {
         try (var session = sessionFactory.openSession()) {
             var transaction = session.beginTransaction();
             try {
-                session.save(lesson);
+                session.save(student);
                 transaction.commit();
             } catch (Exception e) {
                 transaction.rollback();
@@ -27,11 +27,11 @@ public class LessonRepository implements BaseRepository<Lesson> {
     }
 
     @Override
-    public void update(Lesson lesson) {
+    public void update(Student student) {
         try (var session = sessionFactory.openSession()) {
             var transaction = session.beginTransaction();
             try {
-                session.update(lesson);
+                session.update(student);
                 transaction.commit();
             } catch (Exception e) {
                 transaction.rollback();
@@ -41,13 +41,13 @@ public class LessonRepository implements BaseRepository<Lesson> {
     }
 
     @Override
-    public void delete(String id) {
+    public void delete(String nationalCode) {
         try (var session = sessionFactory.openSession()) {
             var transaction = session.beginTransaction();
             try {
-                String sql = "delete from lesson where id=:id";
+                String sql = "delete from student where nationalcode=:id";
                 var query = session.createNativeQuery(sql);
-                query.setParameter("id", id);
+                query.setParameter("id", nationalCode);
                 query.executeUpdate();
                 transaction.commit();
             } catch (Exception e) {
@@ -58,20 +58,33 @@ public class LessonRepository implements BaseRepository<Lesson> {
     }
 
     @Override
-    public Lesson findById(String id) {
+    public Student findById(String id) {
         try (var session = sessionFactory.openSession()) {
-            return session.find(Lesson.class, id);
+            return session.find(Student.class, id);
         }
     }
 
     @Override
-    public List findAll() {
-        List<Lesson> lessonList = new ArrayList<>();
+    public List<Student> findAll() {
+        List<Student> studentList = new ArrayList<>();
         try(var session = sessionFactory.openSession()) {
-            String hql = "FROM entity.Lesson";
-            var query = session.createQuery(hql, Lesson.class);
-            query.getResultStream().forEach(lessonList::add);
-            return lessonList;
+            String hql = "FROM entity.Student";
+            var query = session.createQuery(hql, Student.class);
+            query.getResultStream().forEach(studentList::add);
+            return studentList;
+        }
+    }
+
+    @Override
+    public Student login(String username, String password) {
+        Student student = null;
+        try (var session = sessionFactory.openSession()) {
+            String sql = "SELECT * FROM student WHERE username = :username and password = :password";
+            var query = session.createNativeQuery(sql, Student.class);
+            query.setParameter("username", username);
+            query.setParameter("password", password);
+            student = query.getSingleResult();
+            return student;
         }
     }
 }

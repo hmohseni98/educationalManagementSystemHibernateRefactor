@@ -1,57 +1,30 @@
 package Entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@MappedSuperclass
 public abstract class Person {
+    @Id
+    @Column (length = 10)
     private String nationalCode;
+    @Column (length = 30)
     private String firstName;
+    @Column (length = 50)
     private String lastName;
+    @Column (length = 100)
     private String address;
+    @Column (columnDefinition = "char(10)")
     private String password;
 
-    public Person(String nationalCode, String firstName, String lastName, String address, String password) {
-        this.nationalCode = nationalCode;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.address = address;
-        this.password = password;
-    }
-
-    public String getNationalCode() {
-        return nationalCode;
-    }
-
-    public void setNationalCode(String nationalCode) {
-        this.nationalCode = nationalCode;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }

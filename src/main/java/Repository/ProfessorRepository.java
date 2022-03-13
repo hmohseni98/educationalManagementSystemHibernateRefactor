@@ -1,22 +1,27 @@
 package Repository;
 
+import CustomException.UsernameAlreadyExist;
+import Database.MyConnection;
 import Database.SessionFactorySingleton;
 import Entity.Employee;
-import Entity.PresentingLesson;
+import Entity.Professor;
+import Entity.TypeOfEmployment;
 import org.hibernate.SessionFactory;
 
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PresentingLessonRepository implements BaseRepository<PresentingLesson> {
+public class ProfessorRepository implements UserInterface<Professor> {
+
     private SessionFactory sessionFactory = SessionFactorySingleton.getInstance();
 
     @Override
-    public void save(PresentingLesson presentingLesson) {
+    public void save(Professor professor) {
         try(var session = sessionFactory.openSession() ){
             var transaction = session.beginTransaction();
             try{
-                session.save(presentingLesson);
+                session.save(professor);
                 transaction.commit();
             } catch (Exception e){
                 transaction.rollback();
@@ -26,11 +31,11 @@ public class PresentingLessonRepository implements BaseRepository<PresentingLess
     }
 
     @Override
-    public void update(PresentingLesson presentingLesson) {
+    public void update(Professor professor) {
         try(var session = sessionFactory.openSession() ){
             var transaction = session.beginTransaction();
             try{
-                session.update(presentingLesson);
+                session.update(professor);
                 transaction.commit();
             } catch (Exception e){
                 transaction.rollback();
@@ -44,7 +49,7 @@ public class PresentingLessonRepository implements BaseRepository<PresentingLess
         try (var session = sessionFactory.openSession()) {
             var transaction = session.beginTransaction();
             try {
-                String sql = "delete from presentinglesson where id=:id";
+                String sql = "delete from professor where id=:id";
                 var query = session.createNativeQuery(sql);
                 query.setParameter("id", id);
                 query.executeUpdate();
@@ -57,20 +62,33 @@ public class PresentingLessonRepository implements BaseRepository<PresentingLess
     }
 
     @Override
-    public PresentingLesson findById(String id) {
+    public Professor findById(String id) {
         try (var session = sessionFactory.openSession()) {
-            return session.find(PresentingLesson.class, id);
+            return session.find(Professor.class, id);
         }
     }
 
     @Override
-    public List<PresentingLesson> findAll() {
-        List<PresentingLesson> presentingLessonList = new ArrayList<>();
+    public List<Professor> findAll() {
+        List<Professor> professorList = new ArrayList<>();
         try(var session = sessionFactory.openSession()) {
-            String hql = "FROM entity.PresentingLesson";
-            var query = session.createQuery(hql, PresentingLesson.class);
-            query.getResultStream().forEach(presentingLessonList::add);
-            return presentingLessonList;
+            String hql = "FROM entity.Professor";
+            var query = session.createQuery(hql, Professor.class);
+            query.getResultStream().forEach(professorList::add);
+            return professorList;
+        }
+    }
+
+    @Override
+    public Professor login(String username, String password) {
+        Professor professor = null;
+        try (var session = sessionFactory.openSession()) {
+            String sql = "SELECT * FROM professor WHERE username = :username and password = :password";
+            var query = session.createNativeQuery(sql, Professor.class);
+            query.setParameter("username", username);
+            query.setParameter("password", password);
+            professor = query.getSingleResult();
+            return professor;
         }
     }
 }
