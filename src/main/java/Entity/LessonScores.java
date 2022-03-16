@@ -16,14 +16,31 @@ public class LessonScores {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String year;
-    private String term;
-
+    private Integer year;
+    private Integer term;
     @ManyToOne
     private Student student;
     @ManyToOne
-    private PresentingLesson presentingLesson;
-
+    private Lesson lesson;
     private float score;
 
+    public LessonScores(Integer year, Integer term, Student student, Lesson lesson, float score) {
+        this.year = year;
+        this.term = term;
+        this.student = student;
+        this.lesson = lesson;
+        this.score = score;
+    }
+
+    @Override
+    public String toString() {
+        return "LessonScores{" +
+                "id=" + id +
+                ", year=" + year +
+                ", term=" + term +
+                ", student=" + student.getNationalCode() +
+                ", lesson=" + lesson.getName() +
+                ", score=" + score +
+                '}';
+    }
 }

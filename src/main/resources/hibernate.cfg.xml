@@ -8,7 +8,8 @@
         <property name="connection.username">postgres</property>
         <property name="connection.password">123456</property>
 
-        <property name="hibernate.hbm2ddl.auto">create-drop</property> <!-- Generates Database Schema. Do not Use In PRODUCTION! -->
+        <property name="hibernate.hbm2ddl.auto">create-drop</property>
+        <property name="current_session_context_class">thread</property>
         <property name="show_sql">true</property>
     </session-factory>
 </hibernate-configuration>

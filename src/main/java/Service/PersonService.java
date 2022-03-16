@@ -2,7 +2,7 @@ package Service;
 
 import Repository.UserInterface;
 
-public abstract class PersonService<E,R extends UserInterface<E>> extends BaseService<E,R>{
+public abstract class PersonService<E, R extends UserInterface<E>> extends BaseService<E, R> {
 
     private R r;
 
@@ -12,7 +12,7 @@ public abstract class PersonService<E,R extends UserInterface<E>> extends BaseSe
     }
 
 
-    public E login(String username , String password){
-        return r.login(username,password);
+    public E login(Integer nationalCode, String password) {
+        return r.login(nationalCode, password);
     }
 }

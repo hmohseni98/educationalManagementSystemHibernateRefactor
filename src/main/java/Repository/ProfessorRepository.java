@@ -1,18 +1,13 @@
 package Repository;
 
-import CustomException.UsernameAlreadyExist;
-import Database.MyConnection;
 import Database.SessionFactorySingleton;
-import Entity.Employee;
 import Entity.Professor;
-import Entity.TypeOfEmployment;
 import org.hibernate.SessionFactory;
 
-import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProfessorRepository implements UserInterface<Professor> {
+public class ProfessorRepository implements ProfessorInterface {
 
     private SessionFactory sessionFactory = SessionFactorySingleton.getInstance();
 
@@ -45,24 +40,27 @@ public class ProfessorRepository implements UserInterface<Professor> {
     }
 
     @Override
-    public void delete(String id) {
+    public int delete(Integer id) {
+        int res = 0;
         try (var session = sessionFactory.openSession()) {
             var transaction = session.beginTransaction();
             try {
-                String sql = "delete from professor where id=:id";
+                String sql = "delete from professor where nationalcode=:id";
                 var query = session.createNativeQuery(sql);
                 query.setParameter("id", id);
-                query.executeUpdate();
+                res = query.executeUpdate();
                 transaction.commit();
             } catch (Exception e) {
                 transaction.rollback();
                 throw e;
             }
         }
+        return res;
     }
 
+
     @Override
-    public Professor findById(String id) {
+    public Professor findById(Integer id) {
         try (var session = sessionFactory.openSession()) {
             return session.find(Professor.class, id);
         }
@@ -72,7 +70,7 @@ public class ProfessorRepository implements UserInterface<Professor> {
     public List<Professor> findAll() {
         List<Professor> professorList = new ArrayList<>();
         try(var session = sessionFactory.openSession()) {
-            String hql = "FROM entity.Professor";
+            String hql = "FROM Entity.Professor";
             var query = session.createQuery(hql, Professor.class);
             query.getResultStream().forEach(professorList::add);
             return professorList;
@@ -80,15 +78,33 @@ public class ProfessorRepository implements UserInterface<Professor> {
     }
 
     @Override
-    public Professor login(String username, String password) {
+    public Professor login(Integer nationalCode, String password) {
         Professor professor = null;
         try (var session = sessionFactory.openSession()) {
-            String sql = "SELECT * FROM professor WHERE username = :username and password = :password";
+            String sql = "SELECT * FROM professor WHERE nationalcode = :nationalCode and password = :password";
             var query = session.createNativeQuery(sql, Professor.class);
-            query.setParameter("username", username);
+            query.setParameter("nationalCode", nationalCode);
             query.setParameter("password", password);
             professor = query.getSingleResult();
             return professor;
+        }
+    }
+
+    @Override
+    public Integer findLessonUnitById(Integer nationalCode, Integer year, Integer term) {
+        try (var session = sessionFactory.openSession()) {
+            String sql = "select sum(unit) from professor " +
+                    "inner join presentinglesson p on professor.nationalcode = p.professor_nationalcode " +
+                    "inner join lesson l on l.id = p.lesson_id " +
+                    "where nationalcode = :nationalcode and year = :year and term = :term ";
+            var query = session.createNativeQuery(sql);
+            query.setParameter("nationalcode", nationalCode);
+            query.setParameter("year", year);
+            query.setParameter("term", term);
+            if (query.getSingleResult() == null){
+                return null;
+            } else
+                return ((Number)query.getSingleResult()).intValue();
         }
     }
 }

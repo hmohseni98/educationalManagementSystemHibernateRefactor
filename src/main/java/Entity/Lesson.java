@@ -1,9 +1,6 @@
 package Entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -11,13 +8,20 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Getter
 @Setter
+@ToString
 @Entity
 public class Lesson {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
     @Column(length = 30)
     private String name;
+    @Column (columnDefinition = "int")
     private Integer unit;
+
+    public Lesson(String name, Integer unit) {
+        this.name = name;
+        this.unit = unit;
+    }
 
 }

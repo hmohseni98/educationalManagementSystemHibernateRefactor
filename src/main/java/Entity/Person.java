@@ -1,9 +1,6 @@
 package Entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
@@ -16,8 +13,7 @@ import javax.persistence.MappedSuperclass;
 @MappedSuperclass
 public abstract class Person {
     @Id
-    @Column (length = 10)
-    private String nationalCode;
+    private Integer nationalCode;
     @Column (length = 30)
     private String firstName;
     @Column (length = 50)

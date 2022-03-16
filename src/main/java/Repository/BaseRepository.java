@@ -8,9 +8,9 @@ public interface BaseRepository<T> {
 
     void update(T t);
 
-    void delete(String id);
+    int delete(Integer id);
 
-    T findById(String id);
+    T findById(Integer id);
 
     List<T> findAll();
 }

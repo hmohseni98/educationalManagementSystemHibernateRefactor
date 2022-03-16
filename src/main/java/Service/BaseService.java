@@ -1,5 +1,6 @@
 package Service;
 
+import CustomException.RecordDoesNotExist;
 import Repository.BaseRepository;
 
 import java.util.List;
@@ -20,11 +21,12 @@ public abstract class BaseService<E, R extends BaseRepository<E>> {
         r.update(e);
     }
 
-    public void delete(String id) {
-        r.delete(id);
+    public void delete(Integer id) {
+        if (r.delete(id) == 0)
+            throw new RecordDoesNotExist();
     }
 
-    public E findById(String id) {
+    public E findById(Integer id) {
         return r.findById(id);
     }
 
