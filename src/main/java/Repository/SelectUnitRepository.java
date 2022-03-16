@@ -4,6 +4,8 @@ import Database.SessionFactorySingleton;
 
 import Entity.SelectUnit;
 import org.hibernate.SessionFactory;
+
+import javax.persistence.NoResultException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -87,10 +89,10 @@ public class SelectUnitRepository implements SelectUnitInterface {
             query.setParameter("nationalcode", nationalCode);
             query.setParameter("year", year);
             query.setParameter("term", term);
-            if (query.getSingleResult() == null){
+            if (query.getSingleResult() == null) {
                 return null;
             } else
-                return ((Number)query.getSingleResult()).intValue();
+                return ((Number) query.getSingleResult()).intValue();
         }
     }
 
@@ -104,12 +106,37 @@ public class SelectUnitRepository implements SelectUnitInterface {
                     "where professor_nationalcode = :prfnationalcode and" +
                     " l.name = :lessonname and s.year = :year and s.term = :term ";
             var query = session.createNativeQuery(sql, SelectUnit.class);
-            query.setParameter("prfnationalcode",prfNationalCode);
-            query.setParameter("lessonname",lessonName);
-            query.setParameter("year",year);
-            query.setParameter("term",term);
+            query.setParameter("prfnationalcode", prfNationalCode);
+            query.setParameter("lessonname", lessonName);
+            query.setParameter("year", year);
+            query.setParameter("term", term);
             query.getResultStream().forEach(selectUnitList::add);
             return selectUnitList;
+        }
+    }
+
+    @Override
+    public Boolean checkLessonTaken(Integer nationalCode, String lessonName, Integer year, Integer term) {
+        try (var session = sessionFactory.openSession()) {
+            String sql = "select  s.* from selectunit s " +
+                    "inner join student s2 on s2.nationalcode = s.student_nationalcode " +
+                    "inner join presentinglesson p on p.id = s.presentinglesson_id " +
+                    "inner join lesson l on l.id = p.lesson_id " +
+                    "where s2.nationalcode = :nationalcode and l.name = :lessonname and s.year = :year and s.term = :term ";
+            try {
+                var query = session.createNativeQuery(sql, SelectUnit.class);
+                query.setParameter("nationalcode", nationalCode);
+                query.setParameter("lessonname", lessonName);
+                query.setParameter("year", year);
+                query.setParameter("term", term);
+                SelectUnit result = query.getSingleResult();
+                if (result == null)
+                    return false;
+                else
+                    return true;
+            } catch (NoResultException e) {
+                return false;
+            }
         }
     }
 }

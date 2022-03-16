@@ -1,9 +1,12 @@
 package Repository;
 
 import Database.SessionFactorySingleton;
+import Entity.Lesson;
 import Entity.LessonScores;
+import Entity.SelectUnit;
 import org.hibernate.SessionFactory;
 
+import javax.persistence.NoResultException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -96,10 +99,32 @@ public class LessonScoresRepository implements LessonScoreInterface {
         try (var session = sessionFactory.openSession()) {
             String sql = "select * from lessonscores " +
                     "where student_nationalcode = :nationalcode and score >= 10 ";
-            var query = session.createNativeQuery(sql,LessonScores.class);
+            var query = session.createNativeQuery(sql, LessonScores.class);
             query.setParameter("nationalcode", nationalCode);
             query.getResultStream().forEach(lessonScoresList::add);
             return lessonScoresList;
+        }
+    }
+
+    @Override
+    public Boolean checkLessonPassed(Integer nationalCode, String lessonName) {
+        try (var session = sessionFactory.openSession()) {
+            String sql = "select s.* from  lessonscores s " +
+                    "inner join student s2 on s2.nationalcode = s.student_nationalcode " +
+                    "inner join lesson l on l.id = s.lesson_id " +
+                    "where s2.nationalcode = :nationalcode and l.name = :lessonname ";
+            try {
+                var query = session.createNativeQuery(sql, LessonScores.class);
+                query.setParameter("nationalcode", nationalCode);
+                query.setParameter("lessonname", lessonName);
+                LessonScores result = query.getSingleResult();
+                if (result == null)
+                    return false;
+                else
+                    return true;
+            } catch (NoResultException e) {
+                return false;
+            }
         }
     }
 }

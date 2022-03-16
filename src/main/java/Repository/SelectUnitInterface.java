@@ -11,4 +11,6 @@ public interface SelectUnitInterface extends BaseRepository<SelectUnit>{
 
     public List<SelectUnit> findAllByLessonNameAndProfessorId
             (Integer prfNationalCode , String lessonName,Integer year,Integer term );
+
+    public Boolean checkLessonTaken(Integer nationalCode , String lessonName , Integer year , Integer term);
 }

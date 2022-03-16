@@ -1,9 +1,7 @@
 package Repository;
 
 import Database.SessionFactorySingleton;
-import Entity.Employee;
 import Entity.Lesson;
-import Entity.LessonScores;
 import org.hibernate.SessionFactory;
 
 import java.util.ArrayList;

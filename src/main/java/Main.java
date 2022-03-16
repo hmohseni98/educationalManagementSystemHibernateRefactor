@@ -27,7 +27,7 @@ public class Main {
     private static Student student;
     private static Lesson lesson;
     private static SelectUnit selectUnit;
-    private static LocalDateTime now = LocalDateTime.now();
+    private static final LocalDateTime now = LocalDateTime.now();
     private static final FakeDB fakeDB = new FakeDB();
 
     public static void main(String[] args) {
@@ -197,7 +197,7 @@ public class Main {
                 welcomeMenu();
             } else
                 throw new InvalidOption();
-        } catch (InvalidOption | InputMismatchException | UnitSelectionCeiling e) {
+        } catch (InvalidOption | InputMismatchException | UnitSelectionCeiling | ThisLessonAlreadyPassed | ThisLessonHasAlreadyBeenTaken e) {
             System.out.println(e);
             studentMainMenu();
         }
@@ -230,7 +230,7 @@ public class Main {
                 String lName = scanner.next();
                 lessonService.findByName(lName);
                 selectUnitService.findAllByLessonNameAndProfessorId
-                        (professor.getNationalCode(),lName,now.getYear(),calcTerm())
+                                (professor.getNationalCode(), lName, now.getYear(), calcTerm())
                         .forEach(System.out::println);
                 professorMainMenu();
             } else if (selectOption == 3) {
@@ -241,16 +241,18 @@ public class Main {
                 String lessonName = scanner.next();
                 System.out.print("score:");
                 Float score = scanner.nextFloat();
-                Boolean result = presentingLessonService.findLessonByProfessorId(now.getYear(), calcTerm(), professor.getNationalCode(), lessonName);
-                if (result == true) {
-                    LessonScores lessonScores = new LessonScores(now.getYear(), calcTerm(),
-                            studentService.findById(Integer.valueOf(nationalCode)),
-                            lessonService.findByName(lessonName), score);
-                    lessonScoresService.save(lessonScores);
-                    System.out.println("success!");
-                    professorMainMenu();
-                } else
-                    throw new YouDidNotProvideThisLesson();
+                if (score >= 0 && score <= 20) {
+                    Boolean result = presentingLessonService.findLessonByProfessorId(now.getYear(), calcTerm(), professor.getNationalCode(), lessonName);
+                    if (result == true) {
+                        LessonScores lessonScores = new LessonScores(now.getYear(), calcTerm(),
+                                studentService.findById(Integer.valueOf(nationalCode)),
+                                lessonService.findByName(lessonName), score);
+                        lessonScoresService.save(lessonScores);
+                        System.out.println("success!");
+                        professorMainMenu();
+                    } else
+                        throw new YouDidNotProvideThisLesson();
+                } else throw new ScoreOutOfRange();
             } else if (selectOption == 4) {
                 System.out.print("please input number of term:");
                 Integer term = scanner.nextInt();
@@ -266,7 +268,8 @@ public class Main {
             } else if (selectOption == 5) {
                 welcomeMenu();
             }
-        } catch (InvalidOption | InputMismatchException | RecordDoesNotExist | YouDidNotProvideThisLesson e) {
+        } catch (InvalidOption | InputMismatchException | RecordDoesNotExist |
+                YouDidNotProvideThisLesson | ScoreOutOfRange e) {
             System.out.println(e);
             professorMainMenu();
         }

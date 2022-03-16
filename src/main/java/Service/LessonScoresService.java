@@ -24,4 +24,8 @@ public class LessonScoresService extends BaseService<LessonScores, LessonScoresR
         return lessonScoresRepository.passedLesson(nationalCode);
     }
 
+    public Boolean checkLessonPassed(Integer nationalCode, String lessonName) {
+        return lessonScoresRepository.checkLessonPassed(nationalCode, lessonName);
+    }
+
 }
