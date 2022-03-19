@@ -51,8 +51,8 @@ public class Main {
             System.out.println(e);
             welcomeMenu();
         } catch (InputMismatchException e) {
-            System.out.println(TEXT_RED + "invalid character" + TEXT_RESET);
             scanner.nextLine();
+            System.out.println(TEXT_RED + "invalid character" + TEXT_RESET);
             welcomeMenu();
         }
     }
@@ -114,7 +114,7 @@ public class Main {
             else if (inputMenu.equals("employee"))
                 employeeMainMenu();
         } catch (PersistenceException e) {
-            System.out.println(TEXT_RED + "record does not exist!" + TEXT_RESET);
+            System.out.println(TEXT_RED + "database error!!" + TEXT_RESET);
             if (inputMenu.equals("signup"))
                 welcomeMenu();
             else if (inputMenu.equals("employee"))
@@ -198,7 +198,8 @@ public class Main {
             } else
                 throw new InvalidOption();
         } catch (InvalidOption | InputMismatchException | UnitSelectionCeiling | ThisLessonAlreadyPassed | ThisLessonHasAlreadyBeenTaken e) {
-            System.out.println(e);
+            scanner.nextLine();
+            System.out.println(TEXT_RED + e + TEXT_RESET);
             studentMainMenu();
         }
     }
@@ -270,7 +271,8 @@ public class Main {
             }
         } catch (InvalidOption | InputMismatchException | RecordDoesNotExist |
                 YouDidNotProvideThisLesson | ScoreOutOfRange e) {
-            System.out.println(e);
+            scanner.nextLine();
+            System.out.println(TEXT_RED + e + TEXT_RESET);
             professorMainMenu();
         }
     }
@@ -300,7 +302,8 @@ public class Main {
             } else
                 throw new InvalidOption();
         } catch (InvalidOption | InputMismatchException e) {
-            System.out.println(e);
+            scanner.nextLine();
+            System.out.println(TEXT_RED + e + TEXT_RESET);
             employeeMainMenu();
         }
     }
@@ -355,9 +358,6 @@ public class Main {
                 employeeMainMenu();
             } else
                 throw new InvalidOption();
-        } catch (InputMismatchException e) {
-            System.out.println(TEXT_RED + "invalid character" + TEXT_RESET);
-            employeeMainMenu();
         } catch (InvalidOption | RecordDoesNotExist e) {
             System.out.println(e);
             employeeMainMenu();
@@ -411,11 +411,12 @@ public class Main {
                 employeeMainMenu();
             } else
                 throw new InvalidOption();
-        } catch (InvalidNationalCodeCharacter | InvalidOption | InvalidNationalCodeLength | RecordDoesNotExist | CanNotRemoveYourAccount e) {
+        } catch (InvalidNationalCodeCharacter | InvalidOption | InvalidNationalCodeLength | RecordDoesNotExist |
+                CanNotRemoveYourAccount e) {
             System.out.println(e);
             employeeToEmployeeMenu();
         } catch (NullPointerException e) {
-            System.out.println(TEXT_RED + "record does not exist" + TEXT_RESET);
+            System.out.println(TEXT_RED + "database error!" + TEXT_RESET);
             employeeToEmployeeMenu();
         }
     }
@@ -479,7 +480,7 @@ public class Main {
             System.out.println(e);
             employeeToProfessorMenu();
         } catch (NullPointerException e) {
-            System.out.println(TEXT_RED + "record does not exist" + TEXT_RESET);
+            System.out.println(TEXT_RED + "database error!" + TEXT_RESET);
             employeeToProfessorMenu();
         }
     }
@@ -528,7 +529,7 @@ public class Main {
             System.out.println(e);
             employeeToStudentMenu();
         } catch (NullPointerException e) {
-            System.out.println(TEXT_RED + "record does not exist" + TEXT_RESET);
+            System.out.println(TEXT_RED + "database error!" + TEXT_RESET);
             employeeToStudentMenu();
         }
     }

@@ -9,6 +9,6 @@ public class RecordDoesNotExist extends RuntimeException{
 
     @Override
     public String toString() {
-        return TEXT_RED + "Account Does Not Exist" + TEXT_RESET;
+        return TEXT_RED + "Record Does Not Exist" + TEXT_RESET;
     }
 }
